@@ -167,8 +167,7 @@ export function queryDestination(query) {
 export function queryOriginCoordinates(coords) {
   return {
     type: types.ORIGIN_FROM_COORDINATES,
-    coordinates: coords,
-    emitEvent
+    coordinates: coords
   };
 }
 
