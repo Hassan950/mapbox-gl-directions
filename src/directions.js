@@ -440,11 +440,11 @@ export default class MapboxDirections {
    * @param {Array<number>|String} query An array of coordinates [lng, lat] or location name as a string.
    * @returns {MapboxDirections} this
    */
-  setOrigin(query) {
+  setOrigin(query, emitEvent = true) {
     if (typeof query === 'string') {
-      this.actions.queryOrigin(query);
+      this.actions.queryOrigin(query, emitEvent);
     } else {
-      this.actions.setOriginFromCoordinates(query);
+      this.actions.setOriginFromCoordinates(query, emitEvent);
     }
 
     return this;
