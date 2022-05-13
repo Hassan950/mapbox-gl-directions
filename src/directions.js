@@ -357,10 +357,10 @@ export default class MapboxDirections {
     const coords = [e.lngLat.lng, e.lngLat.lat];
     switch (this.isDragging.layer.id) {
       case 'directions-origin-point':
-        this.actions.createOrigin(coords);
+        this.actions.createOrigin(coords, false);
       break;
       case 'directions-destination-point':
-        this.actions.createDestination(coords);
+        this.actions.createDestination(coords, false);
       break;
       case 'directions-hover-point':
         this.actions.hoverMarker(coords);

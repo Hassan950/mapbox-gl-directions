@@ -10,7 +10,6 @@ function originPoint(coordinates, emitEvent = true) {
     });
 
     dispatch({ type: types.ORIGIN, origin });
-    console.log(eventEmit)
     if(emitEvent) dispatch(eventEmit('origin', { feature: origin }));
   };
 }
