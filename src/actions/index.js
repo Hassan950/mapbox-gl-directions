@@ -2,7 +2,7 @@ import * as types from '../constants/action_types';
 import utils from '../utils';
 const request = new XMLHttpRequest();
 
-function originPoint(coordinates) {
+function originPoint(coordinates, emitEvent = true) {
   return (dispatch) => {
     const origin = utils.createPoint(coordinates, {
       id: 'origin',
@@ -10,11 +10,11 @@ function originPoint(coordinates) {
     });
 
     dispatch({ type: types.ORIGIN, origin });
-    dispatch(eventEmit('origin', { feature: origin }));
+    if(emitEvent) dispatch(eventEmit('origin', { feature: origin }));
   };
 }
 
-function destinationPoint(coordinates) {
+function destinationPoint(coordinates, emitEvent = true) {
   return (dispatch) => {
     const destination = utils.createPoint(coordinates, {
       id: 'destination',
@@ -22,17 +22,17 @@ function destinationPoint(coordinates) {
     });
 
     dispatch({ type: types.DESTINATION, destination });
-    dispatch(eventEmit('destination', { feature: destination }));
+    if(emitEvent) dispatch(eventEmit('destination', { feature: destination }));
   };
 }
 
-function setDirections(directions) {
+function setDirections(directions, emitEvent = true) {
   return dispatch => {
     dispatch({
       type: types.DIRECTIONS,
       directions
     });
-    dispatch(eventEmit('route', { route: directions }));
+    if(emitEvent) dispatch(eventEmit('route', { route: directions }));
   };
 }
 
@@ -167,7 +167,8 @@ export function queryDestination(query) {
 export function queryOriginCoordinates(coords) {
   return {
     type: types.ORIGIN_FROM_COORDINATES,
-    coordinates: coords
+    coordinates: coords,
+    emitEvent
   };
 }
 
@@ -220,18 +221,18 @@ export function setRouteIndex(routeIndex) {
   };
 }
 
-export function createOrigin(coordinates) {
+export function createOrigin(coordinates, emitEvent = true) {
   return (dispatch, getState) => {
     const { destination } = getState();
-    dispatch(originPoint(coordinates));
+    dispatch(originPoint(coordinates, emitEvent));
     if (destination.geometry) dispatch(fetchDirections());
   };
 }
 
-export function createDestination(coordinates) {
+export function createDestination(coordinates, emitEvent = true) {
   return (dispatch, getState) => {
     const { origin } = getState();
-    dispatch(destinationPoint(coordinates));
+    dispatch(destinationPoint(coordinates, emitEvent));
     if (origin.geometry) dispatch(fetchDirections());
   };
 }
@@ -263,12 +264,12 @@ export function reverse() {
  *
  * @param {Array<number>} coordinates [lng, lat] array.
  */
-export function setOriginFromCoordinates(coords) {
+export function setOriginFromCoordinates(coords, emitEvent = true) {
   return (dispatch) => {
     if (!utils.validCoords(coords)) coords = [utils.wrap(coords[0]), utils.wrap(coords[1])];
     if (isNaN(coords[0]) && isNaN(coords[1])) return dispatch(setError(new Error('Coordinates are not valid')));
     dispatch(queryOriginCoordinates(coords));
-    dispatch(createOrigin(coords));
+    dispatch(createOrigin(coords, emitEvent));
   };
 }
 
@@ -277,11 +278,11 @@ export function setOriginFromCoordinates(coords) {
  *
  * @param {Array<number>} coords [lng, lat] array.
  */
-export function setDestinationFromCoordinates(coords) {
+export function setDestinationFromCoordinates(coords, emitEvent = true) {
   return (dispatch) => {
     if (!utils.validCoords(coords)) coords = [utils.wrap(coords[0]), utils.wrap(coords[1])];
     if (isNaN(coords[0]) && isNaN(coords[1])) return dispatch(setError(new Error('Coordinates are not valid')));
-    dispatch(createDestination(coords));
+    dispatch(createDestination(coords, emitEvent));
     dispatch(queryDestinationCoordinates(coords));
   };
 }
