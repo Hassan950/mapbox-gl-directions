@@ -10,6 +10,7 @@ function originPoint(coordinates, emitEvent = true) {
     });
 
     dispatch({ type: types.ORIGIN, origin });
+    console.log(eventEmit)
     if(emitEvent) dispatch(eventEmit('origin', { feature: origin }));
   };
 }
@@ -50,7 +51,7 @@ function setHoverMarker(feature) {
   };
 }
 
-function fetchDirections() {
+function fetchDirections(emitEvent = true) {
   return (dispatch, getState) => {
     const { api, accessToken, routeIndex, profile, alternatives, congestion, destination, language, exclude } = getState();
     // if there is no destination set, do not make request because it will fail
@@ -89,8 +90,8 @@ function fetchDirections() {
         dispatch(setDirections(data.routes));
 
         // Revise origin / destination points
-        dispatch(originPoint(data.waypoints[0].location));
-        dispatch(destinationPoint(data.waypoints[data.waypoints.length - 1].location));
+        dispatch(originPoint(data.waypoints[0].location, emitEvent));
+        dispatch(destinationPoint(data.waypoints[data.waypoints.length - 1].location, emitEvent));
       } else {
         dispatch(setDirections([]));
         return dispatch(setError(JSON.parse(request.responseText).message));
@@ -224,7 +225,7 @@ export function createOrigin(coordinates, emitEvent = true) {
   return (dispatch, getState) => {
     const { destination } = getState();
     dispatch(originPoint(coordinates, emitEvent));
-    if (destination.geometry) dispatch(fetchDirections());
+    if (destination.geometry) dispatch(fetchDirections(emitEvent));
   };
 }
 
